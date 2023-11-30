@@ -30,6 +30,10 @@ const fhss_config_t domains[] = {
     {"US433W", 
      FREQ_HZ_TO_REG_VAL(423500000), FREQ_HZ_TO_REG_VAL(438000000), 20,
      FREQ_HZ_TO_REG_VAL(423500000), FREQ_HZ_TO_REG_VAL(438000000), 20},
+    {"433Wide_FCC915", 
+     FREQ_HZ_TO_REG_VAL(433050000), FREQ_HZ_TO_REG_VAL(434790000), 20, // Radio 1: 433 Wide
+     FREQ_HZ_TO_REG_VAL(902000000), FREQ_HZ_TO_REG_VAL(928000000), 40  // Radio 2: 915 US
+    },
     //todo  Add the ISM 2.4GHz domain for SX128X radios
    // {"ISM2G4", 
    //  FREQ_HZ_TO_REG_VAL(2400400000), FREQ_HZ_TO_REG_VAL(2479400000), 80,
@@ -47,17 +51,17 @@ const fhss_config_t domains[] = {
         FREQ_HZ_TO_REG_VAL(2400400000), // Start frequency for Radio 1
         FREQ_HZ_TO_REG_VAL(2479400000), // End frequency for Radio 1
         80, // Channel spacing for Radio 1
-        FREQ_HZ_TO_REG_VAL(2400400000), // Start frequency for Radio 2 (example)
-        FREQ_HZ_TO_REG_VAL(2479400000), // End frequency for Radio 2 (example)
-        80  // Channel spacing for Radio 2 (example)
+        FREQ_HZ_TO_REG_VAL(2400400000), // Start frequency for Radio 2 
+        FREQ_HZ_TO_REG_VAL(2479400000), // End frequency for Radio 2 
+        80  // Channel spacing for Radio 2 
     #elif defined(Regulatory_Domain_ISM_2400)
         "ISM2G4",
         FREQ_HZ_TO_REG_VAL(2400400000), // Start frequency for Radio 1
         FREQ_HZ_TO_REG_VAL(2479400000), // End frequency for Radio 1
         80, // Channel spacing for Radio 1
-        FREQ_HZ_TO_REG_VAL(2400400000), // Start frequency for Radio 2 (example)
-        FREQ_HZ_TO_REG_VAL(2479400000), // End frequency for Radio 2 (example)
-        80  // Channel spacing for Radio 2 (example)
+        FREQ_HZ_TO_REG_VAL(2400400000), // Start frequency for Radio 2 
+        FREQ_HZ_TO_REG_VAL(2479400000), // End frequency for Radio 2 
+        80  // Channel spacing for Radio 2 
     #endif
     }
 };
