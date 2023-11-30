@@ -252,7 +252,7 @@ static uint8_t minLqForChaos()
     // FHSShopInterval * ceil(100 / FHSShopInterval * numfhss) or
     // FHSShopInterval * trunc((100 + (FHSShopInterval * numfhss) - 1) / (FHSShopInterval * numfhss))
     // With a interval of 4 this works out to: 2.4=4, FCC915=4, AU915=8, EU868=8, EU/AU433=36
-    const uint32_t numfhss = FHSSgetChannelCount();
+    const uint32_t numfhss = FHSSgetChannelCount_1();
     const uint8_t interval = ExpressLRS_currAirRate_Modparams->FHSShopInterval;
     return interval * ((interval * numfhss + 99) / (interval * numfhss));
 }
@@ -334,7 +334,7 @@ void SetRFLinkRate(uint8_t index) // Set speed of RF link
     interval = interval * 12 / 10; // increase the packet interval by 20% to allow adding packet header
 #endif
     hwTimer::updateInterval(interval);
-    Radio.Config(ModParams->bw, ModParams->sf, ModParams->cr, GetInitialFreq(),
+    Radio.Config(ModParams->bw, ModParams->sf, ModParams->cr, GetInitialFreq_1(),
                  ModParams->PreambleLen, invertIQ, ModParams->PayloadLength, 0
 #if defined(RADIO_SX128X)
                  , uidMacSeedGet(), OtaCrcInitializer, (ModParams->radio_type == RADIO_TYPE_SX128x_FLRC)
@@ -345,7 +345,7 @@ void SetRFLinkRate(uint8_t index) // Set speed of RF link
     checkGeminiMode();
     if (geminiMode)
     {
-        Radio.SetFrequencyReg(FHSSgetInitialGeminiFreq(), SX12XX_Radio_2);
+        Radio.SetFrequencyReg(FHSSgetInitialGeminiFreq_2(), SX12XX_Radio_2);
     }
 
     OtaUpdateSerializers(smWideOr8ch, ModParams->PayloadLength);
@@ -353,13 +353,14 @@ void SetRFLinkRate(uint8_t index) // Set speed of RF link
     TelemetrySender.setMaxPackageIndex(OtaIsFullRes ? ELRS8_TELEMETRY_MAX_PACKAGES : ELRS4_TELEMETRY_MAX_PACKAGES);
 
     // Wait for (11/10) 110% of time it takes to cycle through all freqs in FHSS table (in ms)
-    cycleInterval = ((uint32_t)11U * FHSSgetChannelCount() * ModParams->FHSShopInterval * interval) / (10U * 1000U);
+    cycleInterval = ((uint32_t)11U * FHSSgetChannelCount_1() * ModParams->FHSShopInterval * interval) / (10U * 1000U);
 
     ExpressLRS_currAirRate_Modparams = ModParams;
     ExpressLRS_currAirRate_RFperfParams = RFperf;
     ExpressLRS_nextAirRateIndex = index; // presumably we just handled this
     telemBurstValid = false;
 }
+
 
 bool ICACHE_RAM_ATTR HandleFHSS()
 {
@@ -376,18 +377,18 @@ bool ICACHE_RAM_ATTR HandleFHSS()
     {
         if (((OtaNonce + 1)/ExpressLRS_currAirRate_Modparams->FHSShopInterval) % 2 == 0)
         {
-            Radio.SetFrequencyReg(FHSSgetNextFreq(), SX12XX_Radio_1);
-            Radio.SetFrequencyReg(FHSSgetGeminiFreq(), SX12XX_Radio_2);
+            Radio.SetFrequencyReg(FHSSgetNextFreq_1(), SX12XX_Radio_1);
+            Radio.SetFrequencyReg(FHSSgetGeminiFreq_2(), SX12XX_Radio_2);
         }
         else
         {
-            Radio.SetFrequencyReg(FHSSgetNextFreq(), SX12XX_Radio_2);
-            Radio.SetFrequencyReg(FHSSgetGeminiFreq(), SX12XX_Radio_1);
+            Radio.SetFrequencyReg(FHSSgetNextFreq_2(), SX12XX_Radio_2);
+            Radio.SetFrequencyReg(FHSSgetGeminiFreq_1(), SX12XX_Radio_1);
         }
     }
     else
     {
-        Radio.SetFrequencyReg(FHSSgetNextFreq());
+        Radio.SetFrequencyReg(FHSSgetNextFreq_1());
     }
 
 #if defined(RADIO_SX127X)
@@ -1425,7 +1426,7 @@ static void setupBindingFromConfig()
 
 static void setupRadio()
 {
-    Radio.currFreq = GetInitialFreq();
+    Radio.currFreq = GetInitialFreq_1();
 #if defined(RADIO_SX127X)
     //Radio.currSyncWord = UID[3];
 #endif
@@ -1922,10 +1923,10 @@ void EnterBindingMode()
     // Start attempting to bind
     // Lock the RF rate and freq while binding
     SetRFLinkRate(enumRatetoIndex(RATE_BINDING));
-    Radio.SetFrequencyReg(GetInitialFreq());
+    Radio.SetFrequencyReg(GetInitialFreq_1());
     if (geminiMode)
     {
-        Radio.SetFrequencyReg(FHSSgetInitialGeminiFreq(), SX12XX_Radio_2);
+        Radio.SetFrequencyReg(FHSSgetInitialGeminiFreq_2(), SX12XX_Radio_2);
     }
     // If the Radio Params (including InvertIQ) parameter changed, need to restart RX to take effect
     Radio.RXnb();
